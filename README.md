@@ -3,14 +3,13 @@
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)
 ![Notifications](https://img.shields.io/badge/Notifications-Telegram%20%7C%20Webhook-26A5E4)
 
-🔗 Nav: [🎮 Steam](app/modules/steam/README.md) · [🤖 OpenAI](app/modules/openai/README.md) · [🟣 Claude](app/modules/claude/README.md) · [🧭 Cfx](app/modules/cfx/README.md) · [☁️ OCI](app/modules/oci/README.md) · [🌐 GCP](app/modules/gcp/README.md) · [☁️ AWS](app/modules/aws/README.md) · [🔔 Notifications](app/notifications/README.md) · [🐳 Docker](DOCKER.md) · [📜 Spec](openspec/changes/add-service-monitor-platform/specs/service-monitor/spec.md)
+🔗 Nav: [🎮 Steam](app/modules/steam/README.md) · [🤖 OpenAI](app/modules/openai/README.md) · [🟣 Claude](app/modules/claude/README.md) · [🧭 Cfx](app/modules/cfx/README.md) · [☁️ OCI](app/modules/oci/README.md) · [🌐 GCP](app/modules/gcp/README.md) · [☁️ AWS](app/modules/aws/README.md) · [🔔 Notifications](app/notifications/README.md) · [🐳 Docker](DOCKER.md)
 
 Monitor Python modular que checa páginas de status de terceiros (Steam, OpenAI, Claude, Cfx, OCI, GCP e AWS) e dispara notificações configuráveis quando qualquer módulo gera ALERT.
 
 ## 📘 Estrutura
 - `app/`: core, módulos (`steam`, `openai`, `claude`, `cfx`, `oci`, `gcp`, `aws`) e notificadores.
 - `docker-compose.yml`, `Dockerfile` e `.env(.example)` ficam na raiz para facilitar implantação local e no container.
-- `openspec/`: proposta em andamento (`add-service-monitor-platform`) e a spec vigente.
 
 ## 📦 Módulos
 - 🎮 **Steam**: rastreia https://steamstat.us/, aplica regras `status`/`keyword`/`regex` sobre a seção “Steam Services” e publica quais serviços estão fora do ar. [app/modules/steam/README.md](app/modules/steam/README.md)
