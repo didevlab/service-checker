@@ -26,27 +26,27 @@ A modular Python monitor that continuously checks third-party status pages (Stea
 - Personal or small-team monitoring without heavy tooling.
 
 ## 🧱 Project structure
-- `app/`: core engine, module loaders, modules, and notifiers.
-- `docker-compose.yml`, `Dockerfile`, and `.env(.example)`: local and container runtime.
+- `app/`: core engine, module loaders, modules, and notifiers ([notifications](app/notifications/README.md)).
+- `docker-compose.yml`, `Dockerfile`, and `.env(.example)`: local and container runtime ([Docker guide](DOCKER.md)).
 
 ## 📦 Modules
 Each module pulls a provider-specific status source and applies rules configured via environment variables.
 
-- 🎮 **Steam**: https://steamstat.us/ (HTML parsing with status/keyword/regex).
-- 🤖 **OpenAI**: https://status.openai.com (`/api/v2/summary.json`).
-- 🟣 **Claude**: https://status.claude.com (`/api/v2/summary.json`).
-- 🧭 **Cfx**: https://status.cfx.re (`/api/v2/summary.json`).
-- ☁️ **OCI**: https://ocistatus.oraclecloud.com (RSS `incident-summary.rss`).
-- 🌐 **GCP**: https://status.cloud.google.com (`incidents.json`).
-- ☁️ **AWS**: https://health.aws.amazon.com/public/currentevents (JSON events).
+- 🎮 **Steam**: https://steamstat.us/ (HTML parsing with status/keyword/regex). [📖](app/modules/steam/README.md)
+- 🤖 **OpenAI**: https://status.openai.com (`/api/v2/summary.json`). [📖](app/modules/openai/README.md)
+- 🟣 **Claude**: https://status.claude.com (`/api/v2/summary.json`). [📖](app/modules/claude/README.md)
+- 🧭 **Cfx**: https://status.cfx.re (`/api/v2/summary.json`). [📖](app/modules/cfx/README.md)
+- ☁️ **OCI**: https://ocistatus.oraclecloud.com (RSS `incident-summary.rss`). [📖](app/modules/oci/README.md)
+- 🌐 **GCP**: https://status.cloud.google.com (`incidents.json`). [📖](app/modules/gcp/README.md)
+- ☁️ **AWS**: https://health.aws.amazon.com/public/currentevents (JSON events). [📖](app/modules/aws/README.md)
 
 See each module README for rules, filters, and examples.
 
 ## 🔔 Notifications
 Alerts are managed by `NotificationManager` and dispatched when a module reports `ALERT` or when a service returns to `OK`.
 
-- **Telegram**: HTML card notifications for chats or groups.
-- **Webhook**: JSON POST payloads for custom integrations.
+- **Telegram**: HTML card notifications for chats or groups. [Telegram notifier](app/notifications/telegram/README.md)
+- **Webhook**: JSON POST payloads for custom integrations. [Webhook notifier](app/notifications/webhook/README.md)
 
 ## 🚀 Quick start
 1. Copy `.env.example` to `.env` and customize filters/tokens.
@@ -66,7 +66,7 @@ Providers -> Modules -> Monitor Core -> NotificationManager -> Channels
 Each module also supports its own `*_RULE_KIND`, `*_RULE_VALUE`, and `*_SERVICE_FILTER` keys.
 
 ## 🐳 Docker usage
-See `DOCKER.md` for GHCR image usage, dev builds (`docker-compose-dev.yml`), and full environment reference.
+See [DOCKER.md](DOCKER.md) for GHCR image usage, dev builds (`docker-compose-dev.yml`), and full environment reference.
 
 ## 🧯 Troubleshooting
 - **No alerts coming through**: verify the module is enabled, `*_RULE_KIND`/`*_RULE_VALUE` are set, and the provider is actually degraded.
