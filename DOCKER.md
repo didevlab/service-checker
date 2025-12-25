@@ -12,7 +12,7 @@ This guide covers two Docker Compose setups:
 The release image is published in GitHub Packages (GHCR).
 
 ```bash
-docker pull ghcr.io/didevlab/service-monitor:v1.0.1
+docker pull ghcr.io/didevlab/service-monitor:vX.Y.Z
 ```
 
 Start the service using the image:
@@ -20,9 +20,9 @@ Start the service using the image:
 docker compose up -d
 ```
 
-To pin a different release, set `SERVICE_MONITOR_IMAGE_TAG` in `.env`:
+To pin a release, set `SERVICE_MONITOR_IMAGE_TAG` in `.env` to the current release tag (for example, `v1.0.1`):
 ```bash
-SERVICE_MONITOR_IMAGE_TAG=v1.0.1
+SERVICE_MONITOR_IMAGE_TAG=vX.Y.Z
 ```
 
 ## 🛠️ Local build (development)
