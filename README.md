@@ -2,6 +2,8 @@
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Docker](https://img.shields.io/badge/Docker-Ready-2496ED)
 ![Notifications](https://img.shields.io/badge/Notifications-Telegram%20%7C%20Webhook-26A5E4)
+![Semantic Release](https://github.com/didevlab/service-checker/actions/workflows/release.yml/badge.svg)
+![Publish Image](https://github.com/didevlab/service-checker/actions/workflows/publish.yml/badge.svg)
 
 🔗 Nav: [🎮 Steam](app/modules/steam/README.md) · [🤖 OpenAI](app/modules/openai/README.md) · [🟣 Claude](app/modules/claude/README.md) · [🧭 Cfx](app/modules/cfx/README.md) · [☁️ OCI](app/modules/oci/README.md) · [🌐 GCP](app/modules/gcp/README.md) · [☁️ AWS](app/modules/aws/README.md) · [🔔 Notifications](app/notifications/README.md) · [🐳 Docker](DOCKER.md)
 
@@ -12,6 +14,16 @@ A modular Python monitor that continuously checks third-party status pages (Stea
 - Multiple notification channels (Telegram, Webhook).
 - Per-service alert lifecycle with repeat throttling.
 - Docker-first deployment with sensible defaults.
+
+## 🎯 Why this exists
+- Reduce manual status page checks across multiple providers.
+- Standardize alerting for incidents across heterogeneous sources.
+- Keep the footprint small and operable with simple env config.
+
+## 🧭 Use cases
+- Ops teams wanting a single alert stream for upstream incidents.
+- SREs watching provider health in specific regions or services.
+- Personal or small-team monitoring without heavy tooling.
 
 ## 🧱 Project structure
 - `app/`: core engine, module loaders, modules, and notifiers.
@@ -40,6 +52,11 @@ Alerts are managed by `NotificationManager` and dispatched when a module reports
 1. Copy `.env.example` to `.env` and customize filters/tokens.
 2. Run `docker compose up --build` from the repository root.
 3. Monitor logs with `docker compose logs --tail 20`.
+
+## 🗺️ Flow overview
+```
+Providers -> Modules -> Monitor Core -> NotificationManager -> Channels
+```
 
 ## 🧰 Configuration essentials
 - `SERVICE_MONITOR_MODULES`: comma-separated list of module slugs to load.
