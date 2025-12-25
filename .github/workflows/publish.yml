@@ -1,8 +1,9 @@
 name: Build and Publish
 
 on:
-  push:
-    tags: ["v*"]
+  workflow_run:
+    workflows: ["Semantic Release"]
+    types: [completed]
   workflow_dispatch:
 
 permissions:
@@ -11,9 +12,23 @@ permissions:
 
 jobs:
   build:
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+      - name: Resolve release tag
+        shell: bash
+        run: |
+          git fetch --tags --force
+          VERSION=$(git describe --tags --abbrev=0 --match "v*")
+          if [ -z "$VERSION" ]; then
+            echo "No release tag found to publish." >&2
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -33,4 +48,4 @@ jobs:
           platforms: linux/amd64
           tags: |
             ghcr.io/${{ github.repository_owner }}/service-monitor:latest
-            ghcr.io/${{ github.repository_owner }}/service-monitor:${{ github.ref_name }}
+            ghcr.io/${{ github.repository_owner }}/service-monitor:${{ env.VERSION }}
