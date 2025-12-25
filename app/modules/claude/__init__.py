@@ -1,0 +1,2 @@
+"""Claude status monitor module."""
+

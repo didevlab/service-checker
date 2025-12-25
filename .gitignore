@@ -1,0 +1,35 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Environment files
+.venv/
+venv/
+env/
+ENV/
+*.env
+.env.local
+
+# Packaging
+*.egg-info/
+dist/
+build/
+.mypy_cache/
+.pytest_cache/
+
+# IDEs and editors
+.vscode/
+.idea/
+.claude/
+.cursor/
+*.swp
+.DS_Store
+
+# Logs
+*.log
+
+# System
+*.bak
+.coverage

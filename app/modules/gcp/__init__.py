@@ -1,0 +1,1 @@
+"""GCP status monitor module."""

@@ -1,0 +1,2 @@
+"""OpenAI status monitor module."""
+

@@ -1,0 +1,1 @@
+"""Webhook notification plugin."""

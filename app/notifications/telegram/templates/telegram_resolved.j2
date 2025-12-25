@@ -1,0 +1,17 @@
+<b>✅ Service-Checker — Resolved</b>
+<i>Module: {{ module_id }}</i>
+
+<b>Level:</b> <code>{{ level }}</code>
+<b>Event:</b> Service-Checker
+<b>Status:</b> <code>{{ status }}</code>
+{% if message %}
+<b>Message:</b> {{ message }}
+{% endif %}
+<b>Timestamp:</b> {{ timestamp }}
+{% if duration_ms %}
+<b>Duration:</b> <code>{{ duration_ms }}ms</code>
+{% endif %}
+{% if interval_seconds %}
+<b>Interval:</b> <code>{{ interval_seconds }}s</code>
+{% endif %}
+<i>Source: check the provider status page for confirmation</i>

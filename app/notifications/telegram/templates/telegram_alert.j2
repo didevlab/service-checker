@@ -1,0 +1,25 @@
+<b>🚨 {{ module_id|upper }}</b>
+<b>Level:</b> <code>{{ level }}</code>
+<b>Event:</b> Service-Checker
+<b>Status:</b> <code>{{ status }}</code>
+{% if reason_items or reason %}
+<b>Reason:</b>
+{% if reason_items %}
+{% for item in reason_items %}
+• <code>{{ item }}</code>
+{% endfor %}
+{% else %}
+• <code>{{ reason }}</code>
+{% endif %}
+{% endif %}
+{% if message %}
+<b>Message:</b> {{ message }}
+{% endif %}
+<b>Timestamp:</b> {{ timestamp }}
+{% if duration_ms %}
+<b>Duration:</b> <code>{{ duration_ms }}ms</code>
+{% endif %}
+{% if interval_seconds %}
+<b>Interval:</b> <code>{{ interval_seconds }}s</code>
+{% endif %}
+<i>Source: check the provider status page for confirmation</i>
