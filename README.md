@@ -66,7 +66,7 @@ Providers -> Modules -> Monitor Core -> NotificationManager -> Channels
 Each module also supports its own `*_RULE_KIND`, `*_RULE_VALUE`, and `*_SERVICE_FILTER` keys.
 
 ## 🐳 Docker usage
-See `DOCKER.md` for full environment reference, examples, and testing guidance.
+See `DOCKER.md` for GHCR image usage, dev builds (`docker-compose-dev.yml`), and full environment reference.
 
 ## 🧯 Troubleshooting
 - **No alerts coming through**: verify the module is enabled, `*_RULE_KIND`/`*_RULE_VALUE` are set, and the provider is actually degraded.
