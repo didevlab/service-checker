@@ -6,9 +6,13 @@
     "@semantic-release/release-notes-generator",
     ["@semantic-release/changelog", {"changelogFile": "CHANGELOG.md"}],
     [
+      "@semantic-release/exec",
+      {"prepareCmd": "python scripts/update_docker_docs.py ${nextRelease.version}"}
+    ],
+    [
       "@semantic-release/git",
       {
-        "assets": ["CHANGELOG.md"],
+        "assets": ["CHANGELOG.md", "DOCKER.md"],
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ],
