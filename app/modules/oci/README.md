@@ -2,54 +2,54 @@
 ![Module](https://img.shields.io/badge/Module-OCI-1F6FEB)
 ![Source](https://img.shields.io/badge/Source-ocistatus.oraclecloud.com-0A66C2)
 
-🔗 Nav: [🏠 Home](../../../README.md) · [🎮 Steam](../steam/README.md) · [🤖 OpenAI](../openai/README.md) · [🟣 Claude](../claude/README.md) · [🧭 Cfx](../cfx/README.md) · [🌐 GCP](../gcp/README.md) · [☁️ AWS](../aws/README.md) · [🔔 Notifications](../../notifications/README.md) · [🐳 Docker](../../../DOCKER.md) · [📜 Spec](../../../openspec/changes/add-service-monitor-platform/specs/service-monitor/spec.md)
+🔗 Nav: [🏠 Home](../../../README.md) · [🎮 Steam](../steam/README.md) · [🤖 OpenAI](../openai/README.md) · [🟣 Claude](../claude/README.md) · [🧭 Cfx](../cfx/README.md) · [🌐 GCP](../gcp/README.md) · [☁️ AWS](../aws/README.md) · [🔔 Notifications](../../notifications/README.md) · [🐳 Docker](../../../DOCKER.md)
 
-Monitor do status da Oracle Cloud em https://ocistatus.oraclecloud.com via feed RSS `incident-summary.rss`, com foco nas regiões LAD.
+Monitors Oracle Cloud status at https://ocistatus.oraclecloud.com via the RSS feed `incident-summary.rss`, focused on LAD regions.
 
-## 📚 Documentação principal
-- README geral: [../../../README.md](../../../README.md)
+## 📚 Main docs
+- General README: [../../../README.md](../../../README.md)
 - Docker: [../../../DOCKER.md](../../../DOCKER.md)
 
-## 🧭 Visão geral
-- Faz GET no feed RSS de incidentes, extrai o status atual de cada item e aplica a regra configurada.
-- Estratégias suportadas: `status` (padrão), `keyword`, `regex`.
-- O ciclo de alerta e resolução é por item do feed (região/serviço), com ALERT/RESOLVED independente.
-- Filtro de regiões/zones via `OCI_SERVICE_FILTER` (case-insensitive).
+## 🧭 Overview
+- GETs the incident RSS feed, extracts the current status from each item, and applies the configured rule.
+- Supported strategies: `status` (default), `keyword`, `regex`.
+- Alert/resolution lifecycle is per feed item (region/service), with independent ALERT/RESOLVED.
+- Region/zone filter via `OCI_SERVICE_FILTER` (case-insensitive).
 
-## 🔧 Variáveis de ambiente (`OCI_`)
+## 🔧 Environment variables (`OCI_`)
 - `URL` (default `https://ocistatus.oraclecloud.com/api/v2/incident-summary.rss`)
 - `INTERVAL_SECONDS` (default 60)
 - `TIMEOUT_SECONDS` (default 10)
-- `USER_AGENT` (default herdado ou `service-monitor/oci`)
-- `ENABLED`: `true/false` para ativar/desativar o módulo (default `true`)
-- `RULE_KIND`: `status` (padrão), `keyword`, `regex`
-- `RULE_VALUE`: para `status`, estados alvo (default `investigating,identified,monitoring`); para `keyword`/`regex`, termo ou padrão
-- `SERVICE_FILTER`: regiões/zonas a monitorar (default `"Brazil East (Sao Paulo),Brazil Southeast (Vinhedo)"`); vazio = todas
+- `USER_AGENT` (default inherited or `service-monitor/oci`)
+- `ENABLED`: `true/false` to enable/disable the module (default `true`)
+- `RULE_KIND`: `status` (default), `keyword`, `regex`
+- `RULE_VALUE`: for `status`, target states (default `investigating,identified,monitoring`); for `keyword`/`regex`, a term or pattern
+- `SERVICE_FILTER`: regions/zones to monitor (default "Brazil East (Sao Paulo),Brazil Southeast (Vinhedo)"); empty = all
 
-## 🚦 Regra `status`
-- Lê o primeiro `<strong>` do `description` de cada item como status atual (ex.: `Investigating`, `Identified`, `Monitoring`, `Resolved`).
-- Gera ALERT se alguma região filtrada tiver status presente em `RULE_VALUE`.
-- Payload retorna os incidentes avaliados ou somente os que geraram ALERT.
+## 🚦 `status` rule
+- Reads the first `<strong>` in each item description as the current status (e.g., `Investigating`, `Identified`, `Monitoring`, `Resolved`).
+- Raises ALERT if any filtered region has a status listed in `RULE_VALUE`.
+- Payload returns all evaluated incidents or only those that triggered ALERT.
 
-## 🌎 Regiões monitoradas por padrão
+## 🌎 Default monitored regions
 - Brazil East (Sao Paulo)
 - Brazil Southeast (Vinhedo)
 
-💡 Se precisar de outra região/serviço não listado, capture o nome exato exibido no título do feed e coloque em `OCI_SERVICE_FILTER` (separado por vírgula). Dica rápida para listar regiões recentes:
+💡 If you need another region/service, capture the exact name shown in the feed title and add it to `OCI_SERVICE_FILTER` (comma-separated). Quick listing for recent regions:
 ```bash
 curl -s https://ocistatus.oraclecloud.com/api/v2/incident-summary.rss \
-  | rg '<title>' | sed 's/.*<title>\\(.*\\)<\\/title>.*/\\1/' \
+  | rg '<title>' | sed 's/.*<title>\(.*\)<\/title>.*/\1/' \
   | cut -d '|' -f2 | sed 's/^ *//;s/ *$//' | sort -u
 ```
 
-## ⚡ Exemplos rápidos
-- Monitorar apenas LAD (default):
+## ⚡ Quick examples
+- Monitor only LAD (default):
   - `OCI_RULE_KIND=status`
   - `OCI_RULE_VALUE=investigating,identified,monitoring`
   - `OCI_SERVICE_FILTER="Brazil East (Sao Paulo),Brazil Southeast (Vinhedo)"`
-- Monitorar qualquer incidente ativo na América do Norte:
+- Monitor any active incident in North America:
   - `OCI_RULE_KIND=status`
   - `OCI_SERVICE_FILTER="us east,us west,canada"`
-- Buscar padrão específico no feed:
+- Search for a specific pattern in the feed:
   - `OCI_RULE_KIND=keyword`
   - `OCI_RULE_VALUE=maintenance`

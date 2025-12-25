@@ -2,21 +2,21 @@
 ![Notifications](https://img.shields.io/badge/Notifications-Telegram%20%7C%20Webhook-26A5E4)
 ![Flow](https://img.shields.io/badge/Lifecycle-Alert%20%26%20Resolved-2EA44F)
 
-🔗 Nav: [🏠 Home](../../README.md) · [🎮 Steam](../modules/steam/README.md) · [🐳 Docker](../../DOCKER.md) · [📜 Spec](../../openspec/changes/add-service-monitor-platform/specs/service-monitor/spec.md)
+🔗 Nav: [🏠 Home](../../README.md) · [🎮 Steam](../modules/steam/README.md) · [🐳 Docker](../../DOCKER.md)
 
-O `NotificationManager` (em `app/core/notifications.py`) recebe os resultados dos módulos e dispara cada canal habilitado sempre que um monitor retorna `ALERT` ou quando um serviço volta a `OK` (mensagem de resolução).
+The `NotificationManager` (in `app/core/notifications.py`) receives module results and dispatches each enabled channel whenever a monitor returns `ALERT` or when a service returns to `OK` (resolution message).
 
-## 🧭 Visão geral
-- Cada módulo é responsável por chamar o handler do `NotificationManager`; o core não precisa conhecer detalhes de cada destino.
-- Para módulos que retornam lista de serviços (Steam/OpenAI/etc.), o ciclo é por serviço (alerta, repetição e resolução independentes).
-- Canais disponíveis: Telegram (`app/notifications/telegram`) e Webhook (`app/notifications/webhook`). Novos destinos podem ser adicionados seguindo o mesmo contrato.
-- Falhas de notificação são logadas com nível `ERROR`, mas não abortam o monitor principal.
+## 🧭 Overview
+- Each module is responsible for calling the `NotificationManager` handler; the core does not need to know destination details.
+- For modules that return a list of services (Steam/OpenAI/etc.), the lifecycle is per service (independent alert, repeat, and resolution).
+- Available channels: Telegram (`app/notifications/telegram`) and Webhook (`app/notifications/webhook`). New destinations can be added following the same contract.
+- Notification failures are logged at `ERROR` level but do not stop the main monitor.
 
-## 🔧 Variáveis
-- `TELEGRAM_*`: habilita o bot, informa o token, permite múltiplos chat_ids (`TELEGRAM_CHAT_IDS`) e opcionalmente altera a URL da API (`TELEGRAM_API_URL`). Use ids negativos para grupos.
-- `NOTIFICATION_REPEAT_MINUTES`: tempo mínimo (minutos) para repetir alertas do mesmo serviço enquanto o incidente persiste (default `10`).
-- `WEBHOOK_*`: habilita o envio e envia um POST JSON para `WEBHOOK_URL`, com token opcional em `WEBHOOK_HEADER_NAME`.
+## 🔧 Variables
+- `TELEGRAM_*`: enables the bot, provides the token, allows multiple chat_ids (`TELEGRAM_CHAT_IDS`), and optionally overrides the API URL (`TELEGRAM_API_URL`). Use negative IDs for groups.
+- `NOTIFICATION_REPEAT_MINUTES`: minimum time (minutes) to repeat alerts for the same service while an incident persists (default `10`).
+- `WEBHOOK_*`: enables delivery and sends a JSON POST to `WEBHOOK_URL`, with an optional token in `WEBHOOK_HEADER_NAME`.
 
-## 📚 Leituras recomendadas
-- [Telegram](telegram/README.md): explica como validar o token (`getMe`), descobrir `chat_id` ou grupo via `getUpdates`, e mostra o template do card Markdown.
-- [Webhook](webhook/README.md): descreve payload, headers e exemplos de uso.
+## 📚 Recommended reading
+- [Telegram](telegram/README.md): how to validate the token (`getMe`), find `chat_id` via `getUpdates`, and the card template.
+- [Webhook](webhook/README.md): payload, headers, and usage examples.

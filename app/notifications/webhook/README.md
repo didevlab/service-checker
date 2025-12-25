@@ -2,17 +2,17 @@
 ![Channel](https://img.shields.io/badge/Channel-Webhook-6E56CF)
 ![Method](https://img.shields.io/badge/Method-POST-0A66C2)
 
-🔗 Nav: [🏠 Home](../../../README.md) · [🎮 Steam](../../modules/steam/README.md) · [🔔 Notifications](../README.md) · [🐳 Docker](../../../DOCKER.md) · [📜 Spec](../../../openspec/changes/add-service-monitor-platform/specs/service-monitor/spec.md)
+🔗 Nav: [🏠 Home](../../../README.md) · [🎮 Steam](../../modules/steam/README.md) · [🔔 Notifications](../README.md) · [🐳 Docker](../../../DOCKER.md)
 
-Dispara um POST para a `WEBHOOK_URL` sempre que um módulo entra em `ALERT` ou quando um serviço retorna a `OK` (evento `RESOLVED`). Você pode anexar um token no cabeçalho (`WEBHOOK_HEADER_NAME`) para autenticação.
+Sends a POST to `WEBHOOK_URL` whenever a module enters `ALERT` or when a service returns to `OK` (`RESOLVED` event). You can attach a token in the header (`WEBHOOK_HEADER_NAME`) for authentication.
 
-## 🔧 Variáveis (`WEBHOOK_`)
-- `WEBHOOK_ENABLED`: `true/false` para ativar o canal (default `false`).
-- `WEBHOOK_URL`: endpoint receptor (obrigatório quando habilitado).
-- `WEBHOOK_TOKEN`: token opcional que será enviado no header `WEBHOOK_HEADER_NAME`.
-- `WEBHOOK_HEADER_NAME`: nome do header (default `Authorization`).
+## 🔧 Variables (`WEBHOOK_`)
+- `WEBHOOK_ENABLED`: `true/false` to enable the channel (default `false`).
+- `WEBHOOK_URL`: receiver endpoint (required when enabled).
+- `WEBHOOK_TOKEN`: optional token sent in the `WEBHOOK_HEADER_NAME` header.
+- `WEBHOOK_HEADER_NAME`: header name (default `Authorization`).
 
-## 🚀 Payload enviado
+## 🚀 Payload sent
 ```json
 {
   "timestamp": "<iso8601>",
@@ -27,9 +27,9 @@ Dispara um POST para a `WEBHOOK_URL` sempre que um módulo entra em `ALERT` ou q
 }
 ```
 
-## ⚙️ Exemplo de uso
-1. Habilite o canal: `WEBHOOK_ENABLED=true`.
-2. Aponte `WEBHOOK_URL` para o seu endpoint e, se preciso, configure:
+## ⚙️ Usage example
+1. Enable the channel: `WEBHOOK_ENABLED=true`.
+2. Point `WEBHOOK_URL` to your endpoint and, if needed, set:
    - `WEBHOOK_TOKEN=Bearer abc123`
-   - `WEBHOOK_HEADER_NAME=Authorization` (ou outro header que o receptor espera).
-3. O monitor envia `POST` com o JSON acima a cada ALERT e loga falhas sem interromper o processo.
+   - `WEBHOOK_HEADER_NAME=Authorization` (or another header expected by the receiver).
+3. The monitor sends the JSON above on every ALERT and logs failures without stopping the process.

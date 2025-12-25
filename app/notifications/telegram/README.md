@@ -2,49 +2,49 @@
 ![Channel](https://img.shields.io/badge/Channel-Telegram-2CA5E0)
 ![Format](https://img.shields.io/badge/Format-HTML-0A66C2)
 
-🔗 Nav: [🏠 Home](../../../README.md) · [🎮 Steam](../../modules/steam/README.md) · [🔔 Notifications](../README.md) · [🐳 Docker](../../../DOCKER.md) · [📜 Spec](../../../openspec/changes/add-service-monitor-platform/specs/service-monitor/spec.md)
+🔗 Nav: [🏠 Home](../../../README.md) · [🎮 Steam](../../modules/steam/README.md) · [🔔 Notifications](../README.md) · [🐳 Docker](../../../DOCKER.md)
 
-Envia cards HTML para chats ou grupos configurados quando um módulo retorna `ALERT` e quando um serviço é resolvido (`RESOLVED`). O texto padrão inclui módulo, status, motivo, horário do envio, resumo do payload e o tempo medido para a checagem.
+Sends HTML cards to configured chats or groups when a module returns `ALERT` and when a service is resolved (`RESOLVED`). The default text includes module, status, reason, send time, payload summary, and measured check duration.
 
-## 🔧 Variáveis (`TELEGRAM_`)
-- `TELEGRAM_ENABLED`: `true/false` para ativar o canal (default `false`).
-- `TELEGRAM_BOT_TOKEN`: token do bot (obrigatório ao ativar); o request usa `/bot${TOKEN}/`.
-- `TELEGRAM_CHAT_ID`: chat ou grupo (usado se `TELEGRAM_CHAT_IDS` estiver vazio).
-- `TELEGRAM_CHAT_IDS`: lista separada por vírgulas para enviar a múltiplos chats/grupos (use ids negativos quando for grupo do Telegram).
-- `TELEGRAM_API_URL`: endpoint da API (default `https://api.telegram.org`). Útil para proxies ou ambientes customizados.
+## 🔧 Variables (`TELEGRAM_`)
+- `TELEGRAM_ENABLED`: `true/false` to enable the channel (default `false`).
+- `TELEGRAM_BOT_TOKEN`: bot token (required when enabled); the request uses `/bot${TOKEN}/`.
+- `TELEGRAM_CHAT_ID`: chat or group (used if `TELEGRAM_CHAT_IDS` is empty).
+- `TELEGRAM_CHAT_IDS`: comma-separated list to send to multiple chats/groups (use negative IDs for Telegram groups).
+- `TELEGRAM_API_URL`: API endpoint (default `https://api.telegram.org`). Useful for proxies or custom environments.
 - `TELEGRAM_TIMESTAMP_FORMAT`: format string used for the timestamp line (default `%Y-%m-%d %H:%M:%S %Z`).
 - `TELEGRAM_TIMESTAMP_ZONE`: `UTC` (default) or `LOCAL`, determines whether the timestamp uses UTC or the host timezone.
 
-## ✅ Validando o bot e destinatários
-1. Verifique o token:  
-   `curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe"` deve devolver `{"ok":true,...}` com o `username`.
-2. Descubra o chat_id:
-   - Envie uma mensagem para o bot (ou adicione-o a um grupo e envie `@<bot_username>`).
-   - Rode `curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates"` e procure o campo `chat.id` no JSON.
-   - Alternativamente, use bots como [@RawDataBot](https://t.me/RawDataBot) para expor o ID.
-3. Para grupos, use o `chat.id` negativo retornado por `getUpdates` (ex.: `-4058878374`). Esse valor funciona tanto em `TELEGRAM_CHAT_ID` quanto em `TELEGRAM_CHAT_IDS`.
+## ✅ Validating the bot and recipients
+1. Check the token:  
+   `curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getMe"` should return `{"ok":true,...}` with the `username`.
+2. Find the chat_id:
+   - Send a message to the bot (or add it to a group and mention `@<bot_username>`).
+   - Run `curl -s "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getUpdates"` and look for `chat.id` in the JSON.
+   - Alternatively, use bots like [@RawDataBot](https://t.me/RawDataBot) to expose the ID.
+3. For groups, use the negative `chat.id` returned by `getUpdates` (e.g., `-4058878374`). This works for both `TELEGRAM_CHAT_ID` and `TELEGRAM_CHAT_IDS`.
 
-## 🧩 Template do card
-O texto de alerta tem o formato:
+## 🧩 Card template
+The alert text has the format:
 
 ```
-🚨 *{MODULE_ID}* alerta
+🚨 *{MODULE_ID}* alert
 • Status: `{STATUS}`
-• Motivo: {REASON}
-• Quando: {UTC_TIMESTAMP}
-• Detalhes: {SUMMARY} (opcional)
-• Duração: `{DURATION_MS:.2f}ms`
+• Reason: {REASON}
+• When: {UTC_TIMESTAMP}
+• Details: {SUMMARY} (optional)
+• Duration: `{DURATION_MS:.2f}ms`
 ```
 
-O campo `Detalhes` resume o payload disponível (lista de serviços, objetos JSON, etc.) e é truncado para evitar mensagens muito longas. O `parse_mode=HTML` garante que o card seja exibido com destaque e separadores limpos.
+The `Details` field summarizes the available payload (service list, JSON objects, etc.) and is truncated to avoid overly long messages. `parse_mode=HTML` ensures the card displays with emphasis and clean separators.
 
-O template HTML usado pelo bot está em `app/notifications/telegram/templates/telegram_alert.j2`; o módulo `steam` usa `telegram_steam.j2` para detalhar os serviços impactados e `telegram_resolved.j2` para a mensagem de resolução.
+The HTML template used by the bot lives at `app/notifications/telegram/templates/telegram_alert.j2`; the `steam` module uses `telegram_steam.j2` to detail impacted services and `telegram_resolved.j2` for the resolution message.
 
-## 🚀 Como usar
-1. Crie o bot com o [BotFather](https://t.me/BotFather) e recupere o token.
-2. Ajuste `.env` com `TELEGRAM_ENABLED=true`, `TELEGRAM_BOT_TOKEN`, e o chat/grupo (via `TELEGRAM_CHAT_ID` ou `TELEGRAM_CHAT_IDS`).
-3. Suba o monitor. Cada ALERT enviará o card a todos os chat_ids configurados.
+## 🚀 How to use
+1. Create the bot with [BotFather](https://t.me/BotFather) and grab the token.
+2. Update `.env` with `TELEGRAM_ENABLED=true`, `TELEGRAM_BOT_TOKEN`, and the chat/group via `TELEGRAM_CHAT_ID` or `TELEGRAM_CHAT_IDS`.
+3. Start the monitor. Each ALERT will send the card to all configured chat_ids.
 
-## ℹ️ Notas
-- Falhas de envio (timeout, chat bloqueado) são logadas como `notify_error` e não abortam o processo.
-- Para novos canais, crie subdiretórios sob `app/notifications/<canal>` e registre-os em `NotificationManager`.
+## ℹ️ Notes
+- Send failures (timeouts, blocked chat) are logged as `notify_error` and do not abort the process.
+- For new channels, create subdirectories under `app/notifications/<channel>` and register them in `NotificationManager`.
