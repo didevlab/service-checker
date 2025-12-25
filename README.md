@@ -68,6 +68,12 @@ Each module also supports its own `*_RULE_KIND`, `*_RULE_VALUE`, and `*_SERVICE_
 ## 🐳 Docker usage
 See `DOCKER.md` for full environment reference, examples, and testing guidance.
 
+## 🧯 Troubleshooting
+- **No alerts coming through**: verify the module is enabled, `*_RULE_KIND`/`*_RULE_VALUE` are set, and the provider is actually degraded.
+- **Telegram messages not delivered**: check bot token, chat ID, and whether the bot has been added to the group.
+- **Webhook errors**: confirm the endpoint is reachable and accepts JSON, and validate any auth header settings.
+- **Too many alerts**: increase `NOTIFICATION_REPEAT_MINUTES` or narrow `*_SERVICE_FILTER`.
+
 ## 🔗 Documentation
 - Modules: [Steam](app/modules/steam/README.md), [OpenAI](app/modules/openai/README.md), [Claude](app/modules/claude/README.md), [Cfx](app/modules/cfx/README.md), [OCI](app/modules/oci/README.md), [GCP](app/modules/gcp/README.md), [AWS](app/modules/aws/README.md)
 - Notifications: [Overview](app/notifications/README.md) · [Telegram](app/notifications/telegram/README.md) · [Webhook](app/notifications/webhook/README.md)
