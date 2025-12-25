@@ -1,0 +1,162 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-monitor
+  labels:
+    app: service-monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-monitor
+  template:
+    metadata:
+      labels:
+        app: service-monitor
+    spec:
+      containers:
+        - name: service-monitor
+          image: ghcr.io/didevlab/service-monitor:v1.0.2
+          imagePullPolicy: IfNotPresent
+          command: ["python", "-m", "app"]
+          env:
+            - name: SERVICE_MONITOR_MODULES
+              value: "steam,openai,claude,cfx,oci,gcp,aws"
+            - name: SERVICE_MONITOR_LOG_LEVEL
+              value: "INFO"
+            - name: SERVICE_MONITOR_DEFAULT_INTERVAL_SECONDS
+              value: "60"
+            - name: SERVICE_MONITOR_DEFAULT_TIMEOUT_SECONDS
+              value: "10"
+            - name: SERVICE_MONITOR_DEFAULT_USER_AGENT
+              value: "service-monitor/1.0"
+            - name: STEAM_URL
+              value: "https://steamstat.us/"
+            - name: STEAM_INTERVAL_SECONDS
+              value: "60"
+            - name: STEAM_TIMEOUT_SECONDS
+              value: "10"
+            - name: STEAM_USER_AGENT
+              value: "service-monitor/steam"
+            - name: STEAM_RULE_KIND
+              value: "status"
+            - name: STEAM_RULE_VALUE
+              value: "major,minor"
+            - name: STEAM_SERVICE_FILTER
+              value: ""
+            - name: STEAM_ENABLED
+              value: "true"
+            - name: OPENAI_URL
+              value: "https://status.openai.com/api/v2/summary.json"
+            - name: OPENAI_INTERVAL_SECONDS
+              value: "60"
+            - name: OPENAI_TIMEOUT_SECONDS
+              value: "10"
+            - name: OPENAI_USER_AGENT
+              value: "service-monitor/openai"
+            - name: OPENAI_RULE_KIND
+              value: "status"
+            - name: OPENAI_RULE_VALUE
+              value: "degraded_performance,partial_outage,major_outage"
+            - name: OPENAI_SERVICE_FILTER
+              value: ""
+            - name: OPENAI_ENABLED
+              value: "true"
+            - name: CLAUDE_URL
+              value: "https://status.claude.com/api/v2/summary.json"
+            - name: CLAUDE_INTERVAL_SECONDS
+              value: "60"
+            - name: CLAUDE_TIMEOUT_SECONDS
+              value: "10"
+            - name: CLAUDE_USER_AGENT
+              value: "service-monitor/claude"
+            - name: CLAUDE_RULE_KIND
+              value: "status"
+            - name: CLAUDE_RULE_VALUE
+              value: "degraded_performance,partial_outage,major_outage"
+            - name: CLAUDE_SERVICE_FILTER
+              value: ""
+            - name: CLAUDE_ENABLED
+              value: "true"
+            - name: CFX_URL
+              value: "https://status.cfx.re/api/v2/summary.json"
+            - name: CFX_INTERVAL_SECONDS
+              value: "60"
+            - name: CFX_TIMEOUT_SECONDS
+              value: "10"
+            - name: CFX_USER_AGENT
+              value: "service-monitor/cfx"
+            - name: CFX_RULE_KIND
+              value: "status"
+            - name: CFX_RULE_VALUE
+              value: "degraded_performance,partial_outage,major_outage"
+            - name: CFX_SERVICE_FILTER
+              value: ""
+            - name: CFX_ENABLED
+              value: "true"
+            - name: OCI_URL
+              value: "https://ocistatus.oraclecloud.com/api/v2/incident-summary.rss"
+            - name: OCI_INTERVAL_SECONDS
+              value: "60"
+            - name: OCI_TIMEOUT_SECONDS
+              value: "10"
+            - name: OCI_USER_AGENT
+              value: "service-monitor/oci"
+            - name: OCI_RULE_KIND
+              value: "status"
+            - name: OCI_RULE_VALUE
+              value: "investigating,identified,monitoring"
+            - name: OCI_SERVICE_FILTER
+              value: "Brazil East (Sao Paulo),Brazil Southeast (Vinhedo)"
+            - name: OCI_ENABLED
+              value: "true"
+            - name: GCP_URL
+              value: "https://status.cloud.google.com/incidents.json"
+            - name: GCP_INTERVAL_SECONDS
+              value: "60"
+            - name: GCP_TIMEOUT_SECONDS
+              value: "10"
+            - name: GCP_USER_AGENT
+              value: "service-monitor/gcp"
+            - name: GCP_RULE_KIND
+              value: "status"
+            - name: GCP_RULE_VALUE
+              value: "service_disruption,service_outage,service_information"
+            - name: GCP_SERVICE_FILTER
+              value: "southamerica-east1,us-central1,us-east1"
+            - name: GCP_ENABLED
+              value: "true"
+            - name: AWS_URL
+              value: "https://health.aws.amazon.com/public/currentevents"
+            - name: AWS_INTERVAL_SECONDS
+              value: "60"
+            - name: AWS_TIMEOUT_SECONDS
+              value: "10"
+            - name: AWS_USER_AGENT
+              value: "service-monitor/aws"
+            - name: AWS_RULE_KIND
+              value: "status"
+            - name: AWS_RULE_VALUE
+              value: "operational_issue"
+            - name: AWS_SERVICE_FILTER
+              value: "sa-east-1,us-east-1,us-east-2"
+            - name: AWS_ENABLED
+              value: "true"
+            - name: TELEGRAM_ENABLED
+              value: "false"
+            - name: TELEGRAM_BOT_TOKEN
+              value: ""
+            - name: TELEGRAM_CHAT_ID
+              value: ""
+            - name: TELEGRAM_CHAT_IDS
+              value: ""
+            - name: TELEGRAM_API_URL
+              value: "https://api.telegram.org"
+            - name: WEBHOOK_ENABLED
+              value: "false"
+            - name: WEBHOOK_URL
+              value: ""
+            - name: WEBHOOK_TOKEN
+              value: ""
+            - name: WEBHOOK_HEADER_NAME
+              value: "Authorization"
