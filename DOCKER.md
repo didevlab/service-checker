@@ -1,24 +1,35 @@
 # Docker usage
 
-This guide focuses on running Service Monitor with Docker Compose and tuning it through environment variables.
+This guide covers two Docker Compose setups:
+- **Release image** (`docker-compose.yml`): runs a published GHCR image.
+- **Local build** (`docker-compose-dev.yml`): builds from the local Dockerfile.
 
 ## ✅ Prerequisites
 - Docker Engine and Docker Compose v2
 - A `.env` file at the repo root (start from `.env.example`)
 
-## 🚀 Quick start
-1. Copy the example env file:
-   ```bash
-   cp .env.example .env
-   ```
-2. Start the stack from the repository root:
-   ```bash
-   docker compose up --build
-   ```
-3. Follow logs:
-   ```bash
-   docker compose logs --tail 50 -f
-   ```
+## 📦 Use the published image (recommended)
+The release image is published in GitHub Packages (GHCR).
+
+```bash
+docker pull ghcr.io/didevlab/service-monitor:v1.0.1
+```
+
+Start the service using the image:
+```bash
+docker compose up -d
+```
+
+To pin a different release, set `SERVICE_MONITOR_IMAGE_TAG` in `.env`:
+```bash
+SERVICE_MONITOR_IMAGE_TAG=v1.0.1
+```
+
+## 🛠️ Local build (development)
+Use the dev compose file to build locally:
+```bash
+docker compose -f docker-compose-dev.yml up --build
+```
 
 ## 🧭 How it works
 - Each module runs on a schedule (default 60s) and pulls a provider status source.
@@ -103,7 +114,7 @@ To force a local alert using Steam:
 1. Set `STEAM_RULE_KIND=keyword` and `STEAM_RULE_VALUE=.*` (regex that always matches).
 2. Restart the stack:
    ```bash
-   docker compose up --build
+   docker compose -f docker-compose-dev.yml up --build
    ```
 3. Watch logs for the `ALERT` event.
 

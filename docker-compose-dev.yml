@@ -1,6 +1,8 @@
 services:
   service-monitor:
-    image: ghcr.io/didevlab/service-monitor:${SERVICE_MONITOR_IMAGE_TAG:-v1.0.1}
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: unless-stopped
     env_file:
       - .env
