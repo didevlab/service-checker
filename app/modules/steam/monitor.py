@@ -145,12 +145,15 @@ def _parse_services(body: str):
         re.IGNORECASE | re.DOTALL,
     )
     tag_pattern = re.compile(r"<[^>]+>")
+    ignored_ids = {"pageviews"}
 
     for match in service_pattern.finditer(body):
         raw_name = match.group(1)
         status_class = match.group(2)
         status_id = match.group(3).strip().lower()
         status_text = match.group(4).strip()
+        if status_id in ignored_ids:
+            continue
         # Remove inner HTML (links, svgs) to keep only visible text.
         name = tag_pattern.sub("", raw_name).strip()
         if not name:

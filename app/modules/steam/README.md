@@ -15,6 +15,7 @@ Monitor https://steamstat.us/ with environment-configurable rules and service fi
 - Supports three strategies: `status`, `keyword`, `regex`.
 - Result includes a payload with evaluated services for auditing.
 - Alert/resolution lifecycle is per service (each Steam Services `id` yields independent ALERT/RESOLVED).
+- The `pageviews` entry is ignored to avoid false alerts on traffic metrics.
 
 ## 🔧 Environment variables (`STEAM_`)
 - `URL` (default `https://steamstat.us/`)
