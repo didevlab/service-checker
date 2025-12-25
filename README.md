@@ -5,39 +5,53 @@
 
 🔗 Nav: [🎮 Steam](app/modules/steam/README.md) · [🤖 OpenAI](app/modules/openai/README.md) · [🟣 Claude](app/modules/claude/README.md) · [🧭 Cfx](app/modules/cfx/README.md) · [☁️ OCI](app/modules/oci/README.md) · [🌐 GCP](app/modules/gcp/README.md) · [☁️ AWS](app/modules/aws/README.md) · [🔔 Notifications](app/notifications/README.md) · [🐳 Docker](DOCKER.md)
 
-Modular Python monitor that checks third-party status pages (Steam, OpenAI, Claude, Cfx, OCI, GCP, and AWS) and sends configurable notifications whenever any module enters ALERT.
+A modular Python monitor that continuously checks third-party status pages (Steam, OpenAI, Claude, Cfx, OCI, GCP, and AWS) and sends configurable alerts when any module detects an incident.
 
-## 📘 Structure
-- `app/`: core, modules (`steam`, `openai`, `claude`, `cfx`, `oci`, `gcp`, `aws`), and notifiers.
-- `docker-compose.yml`, `Dockerfile`, and `.env(.example)` live at the repo root to simplify local and container deployments.
+## ✅ Highlights
+- Modular, plug-in style monitors for popular status providers.
+- Multiple notification channels (Telegram, Webhook).
+- Per-service alert lifecycle with repeat throttling.
+- Docker-first deployment with sensible defaults.
+
+## 🧱 Project structure
+- `app/`: core engine, module loaders, modules, and notifiers.
+- `docker-compose.yml`, `Dockerfile`, and `.env(.example)`: local and container runtime.
 
 ## 📦 Modules
-- 🎮 **Steam**: tracks https://steamstat.us/, applies `status`/`keyword`/`regex` rules over the “Steam Services” section, and reports which services are down. [app/modules/steam/README.md](app/modules/steam/README.md)
-- 🤖 **OpenAI Status**: consumes `https://status.openai.com/api/v2/summary.json`, filters components/ids, and raises ALERTs for degraded incidents or outages. [app/modules/openai/README.md](app/modules/openai/README.md)
-- 🟣 **Claude Status**: monitors `https://status.claude.com/api/v2/summary.json`, supports component filtering and `keyword/regex` filters. [app/modules/claude/README.md](app/modules/claude/README.md)
-- 🧭 **Cfx Status**: consumes `https://status.cfx.re/api/v2/summary.json` to detect degraded/partial/major outages per component. [app/modules/cfx/README.md](app/modules/cfx/README.md)
-- ☁️ **OCI Status (LAD)**: uses the RSS feed `https://ocistatus.oraclecloud.com/api/v2/incident-summary.rss`, monitoring LAD (default Brazil East/Brazil Southeast). [app/modules/oci/README.md](app/modules/oci/README.md)
-- 🌐 **GCP Status (Americas)**: queries `https://status.cloud.google.com/incidents.json`, focused on regions `southamerica-east1`, `us-central1`, `us-east1`. [app/modules/gcp/README.md](app/modules/gcp/README.md)
-- ☁️ **AWS Status**: fetches `https://health.aws.amazon.com/public/currentevents`, filters active events and regions `sa-east-1`, `us-east-1`, `us-east-2`. [app/modules/aws/README.md](app/modules/aws/README.md)
+Each module pulls a provider-specific status source and applies rules configured via environment variables.
+
+- 🎮 **Steam**: https://steamstat.us/ (HTML parsing with status/keyword/regex).
+- 🤖 **OpenAI**: https://status.openai.com (`/api/v2/summary.json`).
+- 🟣 **Claude**: https://status.claude.com (`/api/v2/summary.json`).
+- 🧭 **Cfx**: https://status.cfx.re (`/api/v2/summary.json`).
+- ☁️ **OCI**: https://ocistatus.oraclecloud.com (RSS `incident-summary.rss`).
+- 🌐 **GCP**: https://status.cloud.google.com (`incidents.json`).
+- ☁️ **AWS**: https://health.aws.amazon.com/public/currentevents (JSON events).
+
+See each module README for rules, filters, and examples.
 
 ## 🔔 Notifications
-The central `NotificationManager` dispatches enabled channels whenever a module goes to `ALERT` or a service returns to `OK`. The current implementation provides:
-- **Telegram**: sends HTML cards (`Service-Checker — Alert/Resolved`) to one or more chats/groups. Configure `TELEGRAM_ENABLED=true`, `TELEGRAM_BOT_TOKEN`, and set `TELEGRAM_CHAT_ID` or `TELEGRAM_CHAT_IDS` (use negative IDs for groups). Adjust `TELEGRAM_TIMESTAMP_FORMAT` (default `%Y-%m-%d %H:%M:%S %Z`) and `TELEGRAM_TIMESTAMP_ZONE` (`UTC` or `LOCAL`) to control format and timezone. See [app/notifications/telegram/README.md](app/notifications/telegram/README.md) for validating the token via `getMe`, discovering the chat_id (e.g., send a message to the bot and use `https://api.telegram.org/bot$TOKEN/getUpdates`), and template structure details.
-- **Webhook**: sends a JSON POST to `WEBHOOK_URL` with `ALERT` or `RESOLVED` events and optional `WEBHOOK_TOKEN`/`WEBHOOK_HEADER_NAME` authentication. See the [webhook README](app/notifications/webhook/README.md) for payload and examples.
+Alerts are managed by `NotificationManager` and dispatched when a module reports `ALERT` or when a service returns to `OK`.
+
+- **Telegram**: HTML card notifications for chats or groups.
+- **Webhook**: JSON POST payloads for custom integrations.
 
 ## 🚀 Quick start
-1. Update `.env` (or `.env.example`) with your keys and filters.
-2. Run `docker compose up --build` in the repo root.
-3. Check logs with `docker compose logs --tail 20` or `docker logs <container>`.
+1. Copy `.env.example` to `.env` and customize filters/tokens.
+2. Run `docker compose up --build` from the repository root.
+3. Monitor logs with `docker compose logs --tail 20`.
 
-## 🧰 Configuration
-- `SERVICE_MONITOR_MODULES` controls which modules are loaded (default `steam,openai,claude,cfx,oci,gcp,aws`).
-- Each module respects `<PREFIX>_ENABLED` (default `true`), `<PREFIX>_RULE_*`, `<PREFIX>_SERVICE_FILTER`, and more.
-- Enable notifications with `TELEGRAM_ENABLED=true` and/or `WEBHOOK_ENABLED=true`. If a notification fails, the monitor keeps running and logs the error.
-- Control alert repeat cadence with `NOTIFICATION_REPEAT_MINUTES` (minutes; default `10`).
-- For modules that return a list of services (Steam, OpenAI, etc.), the cycle is **per service**: alerts, repeats, and resolution are tracked individually.
+## 🧰 Configuration essentials
+- `SERVICE_MONITOR_MODULES`: comma-separated list of module slugs to load.
+- `NOTIFICATION_REPEAT_MINUTES`: minimum interval to repeat alerts for the same service.
+- `TELEGRAM_ENABLED` / `WEBHOOK_ENABLED`: enable channels.
 
-## 🔗 Quick docs
+Each module also supports its own `*_RULE_KIND`, `*_RULE_VALUE`, and `*_SERVICE_FILTER` keys.
+
+## 🐳 Docker usage
+See `DOCKER.md` for full environment reference, examples, and testing guidance.
+
+## 🔗 Documentation
 - Modules: [Steam](app/modules/steam/README.md), [OpenAI](app/modules/openai/README.md), [Claude](app/modules/claude/README.md), [Cfx](app/modules/cfx/README.md), [OCI](app/modules/oci/README.md), [GCP](app/modules/gcp/README.md), [AWS](app/modules/aws/README.md)
-- Notifications: [notifier overview](app/notifications/README.md) · [Telegram](app/notifications/telegram/README.md) · [Webhook](app/notifications/webhook/README.md)
+- Notifications: [Overview](app/notifications/README.md) · [Telegram](app/notifications/telegram/README.md) · [Webhook](app/notifications/webhook/README.md)
 - Infra: [DOCKER.md](DOCKER.md), [docker-compose.yml](docker-compose.yml)
